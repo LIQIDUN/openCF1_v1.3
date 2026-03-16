@@ -342,6 +342,8 @@ void save_action(char *str)
 void parse_cmd(char *cmd)
 {
     int pos = 0, index = 0, int1 = 0, int4 = 0;
+		float pitch =0, roll =0,grab=0;
+    // float time_extend_operate =0;
     float kinematics_x = 0, kinematics_y = 0, kinematics_z = 0;
 
     uart_receive_num = 0;
@@ -448,6 +450,21 @@ void parse_cmd(char *cmd)
         {
             // uart1_send_str("Try to find best pos:");
             if (kinematics_move(kinematics_x, kinematics_y, kinematics_z, int4))
+            {
+            }
+            else
+            {
+                uart1_send_str("Can't find best pos!!!");
+            }
+        }
+    }
+		else if (pos = str_contain_str(cmd, "$KMSE:"), pos)
+		//else if (0)
+    {
+        if (sscanf((char *)cmd, "$KMSE:%f,%f,%f,%f,%f,%f,%d!", &kinematics_x, &kinematics_y, &kinematics_z, &pitch, &roll, &grab, &int4))
+        {
+            // uart1_send_str("Try to find best pos:");
+            if (kinematics_move_extend(kinematics_x, kinematics_y, kinematics_z, pitch,roll,grab, int4))
             {
             }
             else
@@ -619,6 +636,44 @@ int kinematics_move(float x, float y, float z, int time)
     }
 
     return 0;
+}
+
+
+int kinematics_move_extend(float x, float y, float z, float pitch, float roll, float grab, int time)
+{
+    // int i, min = 0, flag = 0;
+
+    if (y < 0)
+        return 0;
+
+    // 寻找最佳角度
+    // flag = 0;
+    // for (i = 0; i >= -135; i--)
+    // {
+    //     if (0 == kinematics_analysis(x, y, z, i, &kinematics))
+    //     {
+
+    //         if (i < min)
+    //             min = i;
+    //         flag = 1;
+    //     }
+    // }
+
+    // 用3号舵机与水平最大的夹角作为最佳值
+    // if (flag)
+    // {
+        kinematics_analysis_extend(x, y, z, pitch, roll, grab, &kinematics);
+        sprintf((char *)cmd_return, "{#000P%04dT%04d!#001P%04dT%04d!#002P%04dT%04d!#003P%04dT%04d!#004P%04dT%04d!#005P%04dT%04d!}", kinematics.servo_pwm[0], time,
+                kinematics.servo_pwm[1], time,
+                kinematics.servo_pwm[2], time,
+                3000 - kinematics.servo_pwm[3], time,
+                kinematics.servo_pwm[4], time,
+                kinematics.servo_pwm[5], time);
+        parse_action(cmd_return);
+        return 1;
+    // }
+
+    // return 0;
 }
 
 void set_servo(int index, int pwm, int time)
