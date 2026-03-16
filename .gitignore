@@ -1,0 +1,29 @@
+# 忽略 Keil 编译生成的输出文件和列表文件文件夹（根据你的目录结构定制）
+/Output/
+/Listing/
+
+# 忽略调试配置文件
+/Project/RVMDK(uv5)/DebugConfig/
+
+# 忽略个人的 Keil UI 布局文件和调试配置（保留 .uvprojx 工程主体即可）
+*.uvguix.*
+*.uvgui.*
+*.uvoptx
+
+# 忽略其他编译产生的各类中间文件和备份文件
+*.bak
+*.dep
+*.map
+*.hex
+*.bin
+*.axf
+*.build_log.htm
+*.o
+*.d
+*.crf
+*.sct
+*.iex
+*.scvd
+*.Administrator
+JLinkLog.txt
+*.ini
